@@ -1,9 +1,15 @@
 package tracker;
 
+import tracker.controller.StudentController;
+import tracker.enums.Command;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
+    public static StudentController controller = new StudentController();
     public static void main(String[] args) {
         checkCommand();
     }
@@ -20,10 +26,36 @@ public class Main {
                 System.out.println("Bye!");
                 break;
             }
-            else if (input.contains(Command.add.name())) {
+            else if (input.contains("students")) {
                     System.out.println("Enter student credentials or 'back' to return:");
                     checkInput(sc);
                 }
+            else if (input.equals(Command.list.name()))
+                controller.listStudents();
+            else if (input.contains(Command.points.name())) {
+                System.out.println("Enter an id and points or 'back' to return:");
+                while (true) {
+                    String inp = sc.nextLine();
+                    if (inp.equals("back"))
+                        break;
+                    List<String> res = Arrays.stream(
+                                    inp.split(" "))
+                            .collect(Collectors.toList());
+                    if (controller.checkData(res))
+                        controller.addPoints(res);
+                    else
+                        System.out.println("Incorrect points format");
+                }
+            }
+            else if (input.equals(Command.find.name())) {
+                System.out.println("Enter an id or 'back' to return:");
+                while (true) {
+                    String id = sc.nextLine();
+                    if (id.equals("back"))
+                        break;
+                    controller.getPoints(id);
+                }
+            }
             else if (input.isBlank() || input.isEmpty())
                 System.out.println("No input.");
             else
@@ -33,10 +65,8 @@ public class Main {
     }
 
     public static void checkInput(Scanner sc) {
-        StudentController controller = new StudentController();
         while(true) {
             String input = sc.nextLine();
-
             if (input.equals(Command.back.name())) {
                 System.out.println("Total " + controller.numStudents()
                         + " students were added");
@@ -57,6 +87,8 @@ public class Main {
                     System.out.println("Incorrect last name");
                 else if (!controller.checkEmail(email))
                     System.out.println("Incorrect email");
+                else if (controller.existsEmail(email))
+                    System.out.println("This email is already taken.");
                 else
                     controller.addStudent(firstName, lastName, email);
             }
