@@ -1,15 +1,15 @@
 package tracker.controller;
 
 import tracker.entity.Student;
+import tracker.service.Service;
 import tracker.service.StudentService;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class StudentController implements StudentService {
+public class StudentController extends Service implements StudentService {
 
     private int count_id = 10000;
-    List<Student> studentList = new ArrayList<>();
 
     public void addStudent(String name, String lastname, String email) {
         Student student = new Student(name, lastname, email);

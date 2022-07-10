@@ -10,7 +10,6 @@ public class Student {
     private String lastName;
     private String email;
 
-    private Map<String, Point> pointsMap;
     private final Point point = new Point();
 
     public Student() {}
@@ -52,10 +51,26 @@ public class Student {
     }
 
     public void setPoints(List<String> data) {
-        point.setJavaPoint(Integer.parseInt(data.get(0)));
-        point.setDsaPoint(Integer.parseInt(data.get(1)));
-        point.setDbPoint(Integer.parseInt(data.get(2)));
-        point.setSpringPoint(Integer.parseInt(data.get(3)));
+        int javaPoints = Integer.parseInt(data.get(0));
+        int dsaPoints = Integer.parseInt(data.get(1));
+        int dbPoints = Integer.parseInt(data.get(2));
+        int springPoints = Integer.parseInt(data.get(3));
+        if (javaPoints > 0) {
+            point.setJavaPoint(javaPoints);
+            point.setJavaSub();
+        }
+        if (dsaPoints > 0) {
+            point.setDsaPoint(dsaPoints);
+            point.setDsaSub();
+        }
+        if (dbPoints > 0) {
+            point.setDbPoint(dbPoints);
+            point.setDbSub();
+        }
+        if (springPoints > 0) {
+            point.setSpringPoint(springPoints);
+            point.setSpringSub();
+        }
     }
 
     public void getPointsById() {
@@ -65,4 +80,20 @@ public class Student {
                 point.getDbPoint() + " " +
                 point.getSpringPoint());
     }
+
+    public int getJavaPts() {return point.getJavaPoints();}
+
+    public int getJavaSub() {return point.getJavaSub();}
+
+    public int getDsaPts() {return point.getDsaPoints();}
+
+    public int getDsaSub() {return point.getDsaSub();}
+
+    public int getDbPts() {return point.getDbPoints();}
+
+    public int getDbSub() {return point.getDbSub();}
+
+    public int getSpringPts() {return point.getSpringPoints();}
+
+    public int getSpringSub() {return point.getSpringSub();}
 }
