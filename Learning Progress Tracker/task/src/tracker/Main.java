@@ -21,6 +21,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         System.out.println("Learning Progress Tracker");
         String input;
+        boolean flag = true;
         while(true) {
             input = sc.nextLine();
             if (input.equals(Command.back.name()))
@@ -36,8 +37,13 @@ public class Main {
                         break;
                     course.getStatistic(subject);
                 }
-            } else if (input.equals(Command.notify.name()))
-                course.sendEmail();
+            } else if (input.equals(Command.notify.name())) {
+                if (flag) {
+                    course.sendEmail();
+                    flag = false;
+                } else
+                    System.out.println("Total 0 students have been notified.");
+            }
             else if (input.contains("students")) {
                     System.out.println("Enter student credentials or 'back' to return:");
                     checkInput(sc);

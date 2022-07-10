@@ -19,8 +19,6 @@ public class CourseController extends Service {
     private List<String> leastPop;
     private List<String> highAct;
     private List<String> lowAct;
-    private List<String> easyCou;
-    private List<String> hardCou;
 
     public CourseController() {
         course = new Course();
@@ -258,34 +256,36 @@ public class CourseController extends Service {
         boolean news = false;
         int count = 0;
         String response = "Re: Your Learning Progress";
-        String message = "Hello, %s %s! You have accomplished our %s course!";
+        String message = "Hello, %s %s! You have accomplished our %s course!\n";
         for(Student s : studentList) {
             if (s.getJavaPts() == course.getTotJavaPoints()) {
-                System.out.println("To" + s.getEmail());
+                System.out.println("To: " + s.getEmail());
                 System.out.println(response);
                 System.out.format(message, s.getName(), s.getLastname(), Fields.Java.name());
                 news = true;
             }
             if (s.getDsaPts() == course.getTotDsaPoints()) {
-                System.out.println("To" + s.getEmail());
+                System.out.println("To: " + s.getEmail());
                 System.out.println(response);
                 System.out.format(message, s.getName(), s.getLastname(), Fields.DSA.name());
                 news = true;
             }
             if (s.getDbPts() == course.getTotDbPoints()) {
-                System.out.println("To" + s.getEmail());
+                System.out.println("To: " + s.getEmail());
                 System.out.println(response);
                 System.out.format(message, s.getName(), s.getLastname(), Fields.Databases.name());
                 news = true;
             }
             if (s.getSpringPts() == course.getTotSpringPoints()) {
-                System.out.println("To" + s.getEmail());
+                System.out.println("To: " + s.getEmail());
                 System.out.println(response);
                 System.out.format(message, s.getName(), s.getLastname(), Fields.Spring.name());
                 news = true;
             }
-            if (news)
+            if (news) {
                 count += 1;
+                news = false;
+            }
         }
         System.out.format("Total %d students have been notified.", count);
     }

@@ -100,10 +100,11 @@ public class StudentController extends Service implements StudentService {
     }
 
     public boolean checkData(List<String> data) {
+        String pattern = "^([0-9][0-9]{0,2}|1000)$";
         if (data.size() != 5)
             return false;
         for (int i = 1; i < data.size(); i++) {
-            if(!data.get(i).matches("[0-9]|10"))
+            if(!data.get(i).matches(pattern))
                 return false;
         }
         return true;

@@ -29,13 +29,4 @@ public class PointController extends Service {
         student.getPointsById();
     }
 
-    public boolean checkData(List<String> data) {
-        if (data.size() != 5)
-            return false;
-        for (int i = 1; i < data.size(); i++) {
-            if(!data.get(i).matches("[0-9]|10"))
-                return false;
-        }
-        return true;
-    }
 }
