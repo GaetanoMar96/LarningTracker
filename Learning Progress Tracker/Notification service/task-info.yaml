@@ -1035,6 +1035,801 @@ files:
         }
     }
   learner_created: false
+- name: src/tracker/service/StudentService.java
+  visible: true
+  text: |
+    package tracker.service;
+
+    import tracker.entity.Student;
+
+    import java.util.ArrayList;
+    import java.util.List;
+
+    public interface StudentService {
+
+        boolean checkFirstName(String name);
+
+        boolean checkLastName(String lastName);
+
+        boolean checkEmail(String email);
+
+        boolean existsEmail(String email);
+
+        void listStudents();
+    }
+  learner_created: true
+- name: src/tracker/enums/Command.java
+  visible: true
+  text: |
+    package tracker.enums;
+
+    public enum Command {
+        students,
+        find,
+        points,
+        list,
+        statistics,
+        exit,
+        back
+    }
+  learner_created: true
+- name: src/tracker/controller/CourseController.java
+  visible: true
+  text: |
+    package tracker.controller;
+
+    import tracker.entity.Course;
+    import tracker.entity.Student;
+    import tracker.service.Service;
+
+    import java.math.BigDecimal;
+    import java.math.RoundingMode;
+    import java.util.ArrayList;
+    import java.util.List;
+    import java.util.Map;
+
+    public class CourseController extends Service {
+
+        private Course course;
+
+        private List<String> mostPop;
+        private List<String> leastPop;
+        private List<String> highAct;
+        private List<String> lowAct;
+        private List<String> easyCou;
+        private List<String> hardCou;
+
+        public CourseController() {
+            course = new Course();
+        }
+
+        public void countStatistics() {
+            for(Student s : studentList) {
+                if (s.getJavaPts() > 0) {
+                    course.incJavaEnroll();
+                    course.incJavaSub(s.getJavaSub());
+                    course.incJavaPoints(s.getJavaPts());
+                }
+                if (s.getDsaPts() > 0) {
+                    course.incDsaEnroll();
+                    course.incDsaSub(s.getDsaSub());
+                    course.incDsaPoints(s.getDsaPts());
+                }
+                if (s.getDbPts() > 0) {
+                    course.incDbEnroll();
+                    course.incDbSub(s.getDbSub());
+                    course.incDbPoints(s.getDbPts());
+                }
+                if (s.getSpringPts() > 0) {
+                    course.incSpringEnroll();
+                    course.incSpringSub(s.getSpringSub());
+                    course.incSpringPoints(s.getSpringPts());
+                }
+            }
+        }
+
+        public String getMostPop() {
+            if (course.getJavaEnroll() == 0 && course.getDsaEnroll() == 0 && course.getDbEnroll() == 0 && course.getSpringEnroll() == 0)
+                  return "n/a";
+            mostPop = new ArrayList<>();
+            Map<String,Integer> enrolled = Map.of("Java", course.getJavaEnroll(),
+                    "DSA",course.getDsaEnroll(),
+                    "Databases",course.getDbEnroll(),
+                    "Spring",course.getSpringEnroll()
+            );
+
+            int max = 0;
+            for(Map.Entry<String, Integer> entry : enrolled.entrySet()) {
+                if (entry.getValue() == max) {
+                    mostPop.add(entry.getKey());
+                } else if (entry.getValue() > max) {
+                    mostPop.clear();
+                    mostPop.add(entry.getKey());
+                    max = entry.getValue();
+                }
+            }
+            return mostPop.toString().replace("[", "").replace("]", "");
+        }
+
+        public String getLeastPop() {
+            if (course.getJavaEnroll() == 0 && course.getDsaEnroll() == 0 && course.getDbEnroll() == 0 && course.getSpringEnroll() == 0)
+                return "n/a";
+            if (mostPop.size() == 4)
+                return "n/a";
+            else {
+                leastPop = new ArrayList<>();
+                if (!mostPop.contains("Java"))
+                    leastPop.add("Java");
+                if (!mostPop.contains("DSA"))
+                    leastPop.add("DSA");
+                if (!mostPop.contains("Databases"))
+                    leastPop.add("Databases");
+                if (!mostPop.contains("Spring"))
+                    leastPop.add("Spring");
+            }
+            return leastPop.toString().replace("[", "").replace("]", "");
+        }
+
+        public String getHighSub() {
+            if (course.getJavaEnroll() == 0 && course.getDsaEnroll() == 0 && course.getDbEnroll() == 0 && course.getSpringEnroll() == 0)
+                return "n/a";
+            highAct = new ArrayList<>();
+            Map<String,Integer> submission = Map.of("Java", course.getJavaSub(),
+                    "DSA", course.getDsaSub(),
+                    "Databases",course.getDbSub(),
+                    "Spring",course.getSpringSub()
+            );
+            int max = 0;
+            for(Map.Entry<String, Integer> entry : submission.entrySet()) {
+                if (entry.getValue() == max) {
+                    highAct.add(entry.getKey());
+                } else if (entry.getValue() > max) {
+                    highAct.clear();
+                    highAct.add(entry.getKey());
+                    max = entry.getValue();
+                }
+            }
+            return highAct.toString().replace("[", "").replace("]", "");
+        }
+
+        public String getLessSub() {
+            if (course.getJavaEnroll() == 0 && course.getDsaEnroll() == 0 && course.getDbEnroll() == 0 && course.getSpringEnroll() == 0)
+                return "n/a";
+            if (highAct.size() == 4)
+                return "n/a";
+            else {
+                lowAct = new ArrayList<>();
+                if (!highAct.contains("Java"))
+                    lowAct.add("Java");
+                if (!highAct.contains("DSA"))
+                    lowAct.add("DSA");
+                if (!highAct.contains("Databases"))
+                    lowAct.add("Databases");
+                if (!mostPop.contains("Spring"))
+                    lowAct.add("Spring");
+            }
+            return lowAct.toString().replace("[", "").replace("]", "");
+        }
+
+        public String getHighCourse() {
+            if (course.getJavaEnroll() == 0 && course.getDsaEnroll() == 0 && course.getDbEnroll() == 0 && course.getSpringEnroll() == 0)
+                return "n/a";
+            Map<String,Integer> averaged = Map.of("Java", course.getJavaPoints() / course.getJavaEnroll(),
+                    "DSA", course.getDsaPoints() / course.getDsaEnroll(),
+                    "Databases",course.getDbPoints() / course.getDbEnroll(),
+                    "Spring",course.getSpringPoints() / course.getSpringEnroll()
+            );
+            StringBuilder course = new StringBuilder();
+            int min = 1000;
+            for(Map.Entry<String, Integer> entry : averaged.entrySet()) {
+                if (entry.getValue() == min) {
+                    course.append(entry.getKey()).append(" ,");
+                } else if (entry.getValue() < min) {
+                    course = new StringBuilder();
+                    course.append(entry.getKey());
+                    min = entry.getValue();
+                }
+            }
+            return course.toString();
+        }
+
+        public String getEasyCourse() {
+            if (course.getJavaEnroll() == 0 && course.getDsaEnroll() == 0 && course.getDbEnroll() == 0 && course.getSpringEnroll() == 0)
+                return "n/a";
+            Map<String,Integer> averaged = Map.of("Java", course.getJavaPoints() / course.getJavaEnroll(),
+                    "DSA", course.getDsaPoints() / course.getDsaEnroll(),
+                    "Databases",course.getDbPoints() / course.getDbEnroll(),
+                    "Spring",course.getSpringPoints() / course.getSpringEnroll()
+            );
+            StringBuilder course = new StringBuilder();
+            int max = 0;
+            for(Map.Entry<String, Integer> entry : averaged.entrySet()) {
+                if (entry.getValue() == max) {
+                    course.append(entry.getKey()).append(" ,");
+                } else if (entry.getValue() > max) {
+                    course = new StringBuilder();
+                    course.append(entry.getKey());
+                    max = entry.getValue();
+                }
+            }
+            return course.toString();
+        }
+
+        public void printStatistics() {
+            countStatistics();
+            System.out.println("Type the name of a course to see details or 'back' to quit:");
+            System.out.println("Most popular: " + getMostPop() + "\n" +
+                    "Least popular: " + getLeastPop() + "\n" +
+                    "Highest activity: " + getHighSub() + "\n" +
+                    "Lowest activity: " + getLessSub() + "\n" +
+                    "Easiest course: " + getEasyCourse() + "\n" +
+                    "Hardest course: " + getHighCourse() + "\n");
+        }
+
+        public void getStatistic(String subject) {
+            countStatistics();
+            if (!subject.equals("DSA") && !subject.equals("Java") &&
+                    !subject.equals("Databases") && !subject.equals("Spring"))
+                System.out.println("Unknown course.");
+            else {
+                BigDecimal bd;
+                List<Student> studentListSorted;
+                switch (subject) {
+                    case "Java":
+                        System.out.println("Java");
+                        System.out.println("id    points    completed");
+                        studentListSorted = Service.sortStudentsByJava();
+                        for(Student s : studentListSorted) {
+                            if (s.getJavaPts() > 0) {
+                                bd = BigDecimal.valueOf((double) s.getJavaPts() * 100 / (double) course.getTotJavaPoints());
+                                System.out.println(s.getId() + " " +
+                                        s.getJavaPts() + "       " +
+                                        bd.setScale(1, RoundingMode.HALF_UP) + "%");
+                            }
+                        }
+                        break;
+                    case "DSA":
+                        System.out.println("DSA");
+                        System.out.println("id    points    completed");
+                        studentListSorted = Service.sortStudentsByDsa();
+                        for(Student s : studentListSorted) {
+                            if (s.getDsaPts() > 0) {
+                                bd = BigDecimal.valueOf((double) s.getDsaPts() * 100 / (double) course.getTotDsaPoints());
+                                System.out.println(s.getId() + " " +
+                                        s.getDsaPts() + "         " +
+                                        bd.setScale(1, RoundingMode.HALF_UP) + "%");
+                            }
+                        }
+                        break;
+                    case "Databases":
+                        System.out.println("Databases");
+                        System.out.println("id    points    completed");
+                        studentListSorted = Service.sortStudentsByDb();
+                        for(Student s : studentListSorted) {
+                            if (s.getDbPts() > 0) {
+                                bd = BigDecimal.valueOf((double) s.getDbPts() * 100 / (double) course.getTotDbPoints());
+                                System.out.println(s.getId() + " " +
+                                        s.getDbPts() + "         " +
+                                        bd.setScale(1, RoundingMode.HALF_UP) + "%");
+                            }
+                        }
+                        break;
+                    case "Spring":
+                        System.out.println("Spring");
+                        System.out.println("id    points    completed");
+                        studentListSorted = Service.sortStudentsBySpring();
+                        for(Student s : studentListSorted) {
+                            if (s.getSpringPts() > 0) {
+                                bd = BigDecimal.valueOf((double) s.getSpringPts() * 100 / (double) course.getTotSpringPoints());
+                                System.out.println(s.getId() + " " +
+                                        s.getSpringPts() + "         " +
+                                        bd.setScale(1, RoundingMode.HALF_UP) + "%");
+                            }
+                        }
+                        break;
+                    }
+            }
+
+        }
+    }
+  learner_created: true
+- name: src/tracker/entity/Point.java
+  visible: true
+  text: |
+    package tracker.entity;
+
+    public class Point {
+
+        private int javaPoints = 0;
+        private int dsaPoints = 0;
+        private int dbPoints = 0;
+        private int springPoints = 0;
+
+        private int javaSub = 0;
+        private int dsaSub = 0;
+        private int dbSub = 0;
+        private int springSub = 0;
+
+        public Point() {}
+
+        public String getJavaPoint() {
+            String java = "Java";
+            return java +"="+ this.javaPoints+";";
+        }
+
+        public int getJavaPoints() {
+            return this.javaPoints;
+        }
+
+        public void setJavaPoint(int point) {this.javaPoints += point;}
+
+        public int getJavaSub() {return this.javaSub;}
+
+        public void setJavaSub() {this.javaSub += 1;}
+
+        public String getDsaPoint() {
+            String dsa = "DSA";
+            return dsa +"="+ this.dsaPoints+";";
+        }
+
+        public int getDsaPoints() {
+            return this.dsaPoints;
+        }
+
+        public void setDsaPoint(int point) {this.dsaPoints += point;}
+
+        public int getDsaSub() {return this.dsaSub;}
+
+        public void setDsaSub() {this.dsaSub += 1;}
+
+        public String getDbPoint() {
+            String database = "Databases";
+            return database +"="+ this.dbPoints+";";
+        }
+
+        public int getDbPoints() {
+            return this.dbPoints;
+        }
+
+        public void setDbPoint(int point) {this.dbPoints += point;}
+
+        public int getDbSub() {return this.dbSub;}
+
+        public void setDbSub() {this.dbSub += 1;}
+
+        public String getSpringPoint() {
+            String spring = "Spring";
+            return spring +"="+ this.springPoints;
+        }
+
+        public int getSpringPoints() {
+            return this.springPoints;
+        }
+
+        public void setSpringPoint(int point) {this.springPoints += point;}
+
+        public int getSpringSub() {return this.springSub;}
+
+        public void setSpringSub() {this.springSub += 1;}
+
+    }
+  learner_created: true
+- name: src/tracker/entity/Course.java
+  visible: true
+  text: |
+    package tracker.entity;
+
+    public class Course {
+
+        private final int totJavaPoints = 600;
+        private final int totDsaPoints = 400;
+        private final int totDbPoints = 480;
+        private final int totSpringPoints = 550;
+
+        private int javaEnroll = 0;
+        private int dsaEnroll = 0;
+        private int dbEnroll = 0;
+        private int springEnroll = 0;
+
+        private int javaSub = 0;
+        private int dsaSub = 0;
+        private int dbSub = 0;
+        private int springSub = 0;
+
+        private int javaPoints = 0;
+        private int dsaPoints = 0;
+        private int dbPoints = 0;
+        private int springPoints = 0;
+
+        public Course() {}
+
+        public int getJavaEnroll() {return this.javaEnroll;}
+
+        public void incJavaEnroll() {this.javaEnroll += 1;}
+
+        public int getDsaEnroll() {return this.dsaEnroll;}
+
+        public void incDsaEnroll() {
+            this.dsaEnroll += 1;
+        }
+
+        public int getDbEnroll() {return this.dbEnroll;}
+
+        public void incDbEnroll() {
+            this.dbEnroll += 1;
+        }
+
+        public int getSpringEnroll() {return this.springEnroll;}
+
+        public void incSpringEnroll() {
+            this.springEnroll += 1;
+        }
+
+        public void incJavaSub(int subs) {this.javaSub += subs;}
+
+        public int getJavaSub() {return this.javaSub;}
+
+        public void incDsaSub(int subs) {
+            this.dsaSub += subs;
+        }
+
+        public int getDsaSub() {return this.dsaSub;}
+
+        public void incDbSub(int subs) {this.dbSub += subs;}
+
+        public int getDbSub() {return this.dbSub;}
+
+        public void incSpringSub(int subs) {
+            this.springSub += subs;
+        }
+
+        public int getSpringSub() {return this.springSub;}
+
+        public void incJavaPoints(int points) {this.javaPoints += points;}
+
+        public int getJavaPoints() {return this.javaPoints;}
+
+        public void incDsaPoints(int points) {
+            this.dsaPoints += points;
+        }
+
+        public int getDsaPoints() {return this.dsaPoints;}
+
+        public void incDbPoints(int points) {
+            this.dbPoints += points;
+        }
+
+        public int getDbPoints() {return this.dbPoints;}
+
+        public void incSpringPoints(int points) {
+            this.springPoints += points;
+        }
+
+        public int getSpringPoints() {return this.springPoints;}
+
+        public int getTotJavaPoints() {return totJavaPoints;}
+        public int getTotDsaPoints() {return totDsaPoints;}
+        public int getTotDbPoints() {return totDbPoints;}
+        public int getTotSpringPoints() {return totSpringPoints;}
+    }
+  learner_created: true
+- name: src/tracker/service/Service.java
+  visible: true
+  text: |
+    package tracker.service;
+
+    import tracker.entity.Student;
+
+    import java.util.ArrayList;
+    import java.util.Comparator;
+    import java.util.List;
+    import java.util.stream.Collectors;
+
+    public abstract class Service {
+
+        protected static List<Student> studentList = new ArrayList<>();
+
+        public static List<Student> sortStudentsById() {
+            return studentList.stream()
+                    .sorted((Comparator.comparing(Student::getId)))
+                    .collect(Collectors.toList());
+        }
+
+        public static List<Student> sortStudentsByJava() {
+            return studentList.stream()
+                    .sorted((Comparator.comparing(Student::getJavaPts).reversed()))
+                    //.sorted((Comparator.comparing(Student::getId)))
+                    .collect(Collectors.toList());
+        }
+
+        public static List<Student> sortStudentsByDsa() {
+            return studentList.stream()
+                    .sorted((Comparator.comparing(Student::getDsaPts).reversed()))
+                    //.sorted((Comparator.comparing(Student::getId)))
+                    .collect(Collectors.toList());
+        }
+
+        public static List<Student> sortStudentsByDb() {
+            return studentList.stream()
+                    .sorted((Comparator.comparing(Student::getDbPts).reversed()))
+                    //.sorted((Comparator.comparing(Student::getId)))
+                    .collect(Collectors.toList());
+        }
+
+        public static List<Student> sortStudentsBySpring() {
+            return studentList.stream()
+                    .sorted((Comparator.comparing(Student::getSpringPts).reversed()))
+                    //.sorted((Comparator.comparing(Student::getId)))
+                    .collect(Collectors.toList());
+        }
+    }
+  learner_created: true
+- name: src/tracker/controller/PointController.java
+  visible: true
+  text: |
+    package tracker.controller;
+
+    import tracker.entity.Student;
+    import tracker.service.Service;
+
+    import java.util.List;
+    import java.util.NoSuchElementException;
+
+    public class PointController extends Service {
+
+        public void addPoints(List<String> data) {
+            try {
+                Student student = studentList.stream()
+                        .filter(s -> s.getId().equals(data.get(0)))
+                        .findFirst().get();
+                data.remove(0);
+                student.setPoints(data);
+                System.out.println("Points updated.");
+            } catch (NoSuchElementException n) {
+                System.out.println("No student is found for id=" +data.get(0));
+            }
+        }
+
+        public void getPoints(String id) {
+            Student student = studentList.stream()
+                    .filter(s -> s.getId().equals(id))
+                    .findFirst()
+                    .orElseThrow();
+            student.getPointsById();
+        }
+
+        public boolean checkData(List<String> data) {
+            if (data.size() != 5)
+                return false;
+            for (int i = 1; i < data.size(); i++) {
+                if(!data.get(i).matches("[0-9]|10"))
+                    return false;
+            }
+            return true;
+        }
+    }
+  learner_created: true
+- name: src/tracker/controller/StudentController.java
+  visible: true
+  text: |
+    package tracker.controller;
+
+    import tracker.entity.Student;
+    import tracker.service.Service;
+    import tracker.service.StudentService;
+
+    import java.util.*;
+    import java.util.stream.Collectors;
+
+    public class StudentController extends Service implements StudentService {
+
+        private int count_id = 10000;
+
+        public void addStudent(String name, String lastname, String email) {
+            Student student = new Student(name, lastname, email);
+            student.setId(Integer.toString(count_id));
+            studentList.add(student);
+            count_id += 1;
+            System.out.println("The student has been added.");
+        }
+
+        public int numStudents() { return studentList.size(); }
+
+        public List<String> buildString(String input) {
+            List<String> strings = new ArrayList<>();
+            String firstname = input.split(" ")[0];
+            String email = input.split(" ")[input.split(" ").length - 1];
+            String lastname = String.join(" ", Arrays.stream(input.split(" "))
+                            .collect(Collectors.toList())
+                            .subList(1, input.split(" ").length - 1))
+                            .trim();
+
+            strings.add(firstname);
+            strings.add(lastname);
+            strings.add(email);
+            return strings;
+        }
+
+        @Override
+        public boolean checkFirstName(String firstName) {
+            if(firstName.length() < 2)
+                return false;
+            return firstName.matches("[a-zA-z]+([ '-][a-zA-Z]+)*");
+        }
+
+        @Override
+        public boolean checkLastName(String lastName) {
+            final String lastnamePattern = "[a-zA-z]+([ '-][a-zA-Z]+)*";
+            if(lastName.length() < 2)
+                return false;
+            return lastName.matches(lastnamePattern);
+        }
+
+        @Override
+        public boolean checkEmail(String email) {
+            final String emailPattern = "^[^@]+@[^@]+\\.[^@]+$";
+            return email.matches(emailPattern);
+        }
+
+        @Override
+        public boolean existsEmail(String email) {
+            return studentList.stream()
+                    .anyMatch(s -> s.getEmail().equals(email));
+        }
+
+        @Override
+        public void listStudents() {
+            List<Student> students = studentList.stream()
+                    .sorted((Comparator.comparing(Student::getId)))
+                    .collect(Collectors.toList());
+
+            if (students.isEmpty())
+                System.out.println("No students found");
+            else {
+                System.out.println("Students:");
+                for(Student student : students)
+                    System.out.println(student.getId());
+            }
+        }
+
+        public void addPoints(List<String> data) {
+            try {
+                Student student = studentList.stream()
+                        .filter(s -> s.getId().equals(data.get(0)))
+                        .findFirst().get();
+                data.remove(0);
+                student.setPoints(data);
+                System.out.println("Points updated.");
+            } catch (NoSuchElementException n) {
+                System.out.println("No student is found for id=" +data.get(0));
+            }
+        }
+
+        public void getPoints(String id) {
+            Student student = studentList.stream()
+                    .filter(s -> s.getId().equals(id))
+                    .findFirst()
+                    .orElseThrow();
+            student.getPointsById();
+        }
+
+        public boolean checkData(List<String> data) {
+            if (data.size() != 5)
+                return false;
+            for (int i = 1; i < data.size(); i++) {
+                if(!data.get(i).matches("[0-9]|10"))
+                    return false;
+            }
+            return true;
+        }
+    }
+  learner_created: true
+- name: src/tracker/entity/Student.java
+  visible: true
+  text: |
+    package tracker.entity;
+
+    import java.util.List;
+    import java.util.Map;
+
+    public class Student {
+
+        private String id;
+        private String name;
+        private String lastName;
+        private String email;
+
+        private final Point point = new Point();
+
+        public Student() {}
+
+        public Student(String name, String lastName, String email) {
+            this.name = name;
+            this.lastName = lastName;
+            this.email = email;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) { this.id = id; }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getLastname() {
+            return lastName;
+        }
+
+        public void setLastname(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public void setPoints(List<String> data) {
+            int javaPoints = Integer.parseInt(data.get(0));
+            int dsaPoints = Integer.parseInt(data.get(1));
+            int dbPoints = Integer.parseInt(data.get(2));
+            int springPoints = Integer.parseInt(data.get(3));
+            if (javaPoints > 0) {
+                point.setJavaPoint(javaPoints);
+                point.setJavaSub();
+            }
+            if (dsaPoints > 0) {
+                point.setDsaPoint(dsaPoints);
+                point.setDsaSub();
+            }
+            if (dbPoints > 0) {
+                point.setDbPoint(dbPoints);
+                point.setDbSub();
+            }
+            if (springPoints > 0) {
+                point.setSpringPoint(springPoints);
+                point.setSpringSub();
+            }
+        }
+
+        public void getPointsById() {
+            System.out.println(getId() + " points: " +
+                    point.getJavaPoint() + " " +
+                    point.getDsaPoint() + " " +
+                    point.getDbPoint() + " " +
+                    point.getSpringPoint());
+        }
+
+        public int getJavaPts() {return point.getJavaPoints();}
+
+        public int getJavaSub() {return point.getJavaSub();}
+
+        public int getDsaPts() {return point.getDsaPoints();}
+
+        public int getDsaSub() {return point.getDsaSub();}
+
+        public int getDbPts() {return point.getDbPoints();}
+
+        public int getDbSub() {return point.getDbSub();}
+
+        public int getSpringPts() {return point.getSpringPoints();}
+
+        public int getSpringSub() {return point.getSpringSub();}
+    }
+  learner_created: true
+- name: src/tracker/enums/Fields.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/14400#comment
 status: Unchecked
 record: -1

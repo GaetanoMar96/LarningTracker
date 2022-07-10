@@ -5,6 +5,8 @@ public enum Command {
     find,
     points,
     list,
+    statistics,
+    notify,
     exit,
     back
 }

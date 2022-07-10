@@ -22,6 +22,8 @@ public class Course {
     private int dbPoints = 0;
     private int springPoints = 0;
 
+    public Course() {}
+
     public int getJavaEnroll() {return this.javaEnroll;}
 
     public void incJavaEnroll() {this.javaEnroll += 1;}
@@ -46,29 +48,45 @@ public class Course {
 
     public void incJavaSub(int subs) {this.javaSub += subs;}
 
+    public int getJavaSub() {return this.javaSub;}
+
     public void incDsaSub(int subs) {
         this.dsaSub += subs;
     }
 
+    public int getDsaSub() {return this.dsaSub;}
+
     public void incDbSub(int subs) {this.dbSub += subs;}
+
+    public int getDbSub() {return this.dbSub;}
 
     public void incSpringSub(int subs) {
         this.springSub += subs;
     }
 
+    public int getSpringSub() {return this.springSub;}
+
     public void incJavaPoints(int points) {this.javaPoints += points;}
+
+    public int getJavaPoints() {return this.javaPoints;}
 
     public void incDsaPoints(int points) {
         this.dsaPoints += points;
     }
 
+    public int getDsaPoints() {return this.dsaPoints;}
+
     public void incDbPoints(int points) {
         this.dbPoints += points;
     }
 
+    public int getDbPoints() {return this.dbPoints;}
+
     public void incSpringPoints(int points) {
         this.springPoints += points;
     }
+
+    public int getSpringPoints() {return this.springPoints;}
 
     public int getTotJavaPoints() {return totJavaPoints;}
     public int getTotDsaPoints() {return totDsaPoints;}

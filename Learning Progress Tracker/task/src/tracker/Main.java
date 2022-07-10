@@ -1,5 +1,6 @@
 package tracker;
 
+import tracker.controller.CourseController;
 import tracker.controller.StudentController;
 import tracker.enums.Command;
 
@@ -10,6 +11,8 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static StudentController controller = new StudentController();
+    public static CourseController course = new CourseController();
+
     public static void main(String[] args) {
         checkCommand();
     }
@@ -25,12 +28,20 @@ public class Main {
             else if (input.equals(Command.exit.name())) {
                 System.out.println("Bye!");
                 break;
-            }
+            } else if (input.equals(Command.statistics.name())) {
+                course.printStatistics();
+                while (true) {
+                    String subject = sc.nextLine();
+                    if (subject.equals("back"))
+                        break;
+                    course.getStatistic(subject);
+                }
+            } else if (input.equals(Command.notify.name()))
+                course.sendEmail();
             else if (input.contains("students")) {
                     System.out.println("Enter student credentials or 'back' to return:");
                     checkInput(sc);
-                }
-            else if (input.equals(Command.list.name()))
+            } else if (input.equals(Command.list.name()))
                 controller.listStudents();
             else if (input.contains(Command.points.name())) {
                 System.out.println("Enter an id and points or 'back' to return:");
@@ -46,8 +57,7 @@ public class Main {
                     else
                         System.out.println("Incorrect points format");
                 }
-            }
-            else if (input.equals(Command.find.name())) {
+            } else if (input.equals(Command.find.name())) {
                 System.out.println("Enter an id or 'back' to return:");
                 while (true) {
                     String id = sc.nextLine();
@@ -55,8 +65,7 @@ public class Main {
                         break;
                     controller.getPoints(id);
                 }
-            }
-            else if (input.isBlank() || input.isEmpty())
+            } else if (input.isBlank() || input.isEmpty())
                 System.out.println("No input.");
             else
                 System.out.println("Unknown command!");
@@ -71,8 +80,7 @@ public class Main {
                 System.out.println("Total " + controller.numStudents()
                         + " students were added");
                 break;
-            }
-            else if (!input.contains(" ") || input.split(" ").length <= 2 || input.isBlank())
+            } else if (!input.contains(" ") || input.split(" ").length <= 2 || input.isBlank())
                 System.out.println("Incorrect credentials");
             else {
 
