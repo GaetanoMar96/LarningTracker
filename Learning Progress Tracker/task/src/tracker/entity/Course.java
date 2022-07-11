@@ -89,7 +89,10 @@ public class Course {
     public int getSpringPoints() {return this.springPoints;}
 
     public int getTotJavaPoints() {return totJavaPoints;}
+    
     public int getTotDsaPoints() {return totDsaPoints;}
+    
     public int getTotDbPoints() {return totDbPoints;}
+    
     public int getTotSpringPoints() {return totSpringPoints;}
 }
